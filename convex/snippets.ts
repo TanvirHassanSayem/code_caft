@@ -30,7 +30,6 @@ export const createSnippet = mutation({
     return snippetId;
   },
 });
-
 export const deleteSnippet = mutation({
   args: {
     snippetId: v.id("snippets"),
