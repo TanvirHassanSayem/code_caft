@@ -16,7 +16,7 @@ const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
   userId: user?.id || "",
  });
 return (
- <div className="relative z-10">
+ <div className="relative z-10  bg-slate-400 backdrop-blur-md shadow-lg rounded-lg">
   <div
        className="flex items-center lg:justify-between justify-center 
         bg-[#0a0a0f]/80 backdrop-blur-xl p-6 mb-4 rounded-lg"
@@ -48,8 +48,6 @@ return (
     </span>
   </div>
 </Link>
-
-
                    {/* Navigation */}
                    <nav className="flex items-center space-x-1">
             <Link
@@ -91,12 +89,6 @@ return (
     🚀 Code Sync
   </span>
 </Link>
-
-
-
-
-
-
           </nav > 
         </div> 
         <div className="flex items-center gap-4">
