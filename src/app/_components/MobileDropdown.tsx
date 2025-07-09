@@ -194,7 +194,7 @@ export default function MobileDropdown({
 
             {/* Code Sync Link */}
             <Link
-              href="https://code-sync-live.vercel.app/"
+              href="https://client-gules-omega-70.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => {
