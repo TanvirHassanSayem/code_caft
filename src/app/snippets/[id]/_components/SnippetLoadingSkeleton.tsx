@@ -1,9 +1,11 @@
 import NavigationHeader from "@/components/NavigationHeader";
-
+import { useState, useEffect } from "react";
+const [theme, setTheme] = useState<"dark" | "light">("dark");
 export default function SnippetLoadingSkeleton() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0f] via-[#11111b] to-[#0a0a0f] text-white">
-      <NavigationHeader />
+      <NavigationHeader theme={theme} setTheme={setTheme} />
+
       <main className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 relative z-10">
         {/* Ambient Light Effects */}
         <div className="fixed top-[20%] -left-[10%] w-[40vw] h-[40vw] bg-blue-500/10 blur-[100px] rounded-full pointer-events-none z-0 animate-float" />
