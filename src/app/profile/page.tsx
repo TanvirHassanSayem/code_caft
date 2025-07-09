@@ -1157,7 +1157,7 @@ export default function ProfilePage() {
 
   // 🟢 Run Convex only when user is loaded!
   const userStats = useQuery(api.codeExecutions.getUserStats, user?.id ? { userId: user.id } : "skip") as UserStatsExtended | undefined;
-  const starredSnippets = useQuery(api.snippets.getStarredSnippets, user?.id ? { userId: user.id } : "skip") as SnippetWithLikes[] | undefined;
+  const starredSnippets = useQuery(api.snippets.getStarredSnippets) as SnippetWithLikes[] | undefined;
   const {
     results: executions = [],
     status: executionStatus,

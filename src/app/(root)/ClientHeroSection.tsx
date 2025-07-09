@@ -75,7 +75,7 @@ const ClientHeroSection = memo(() => {
 
 
         <Link
-          href="https://code-sync-live.vercel.app/"
+          href="https://client-gules-omega-70.vercel.app/"
           target="_blank"
           rel="noopener noreferrer"
           className="relative group inline-flex items-center gap-1.5 md:gap-2 lg:gap-3 px-3 md:px-4 lg:px-6 py-2 md:py-2.5 lg:py-3 rounded-lg md:rounded-xl lg:rounded-2xl bg-black/90 text-white border border-cyan-400/50 md:border-2 shadow-[0_0_10px_rgba(6,182,212,0.4)] md:shadow-[0_0_15px_rgba(6,182,212,0.5)] lg:shadow-[0_0_20px_rgba(6,182,212,0.6)] backdrop-blur-xl overflow-hidden transition-all duration-300 ease-out transform hover:scale-105 hover:border-cyan-300 hover:shadow-[0_0_20px_rgba(6,182,212,0.7)] md:hover:shadow-[0_0_25px_rgba(6,182,212,0.8)] animate-pulse flex-shrink-0"
