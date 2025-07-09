@@ -1,13 +1,13 @@
 "use client";
 
 import { useCodeEditorStore } from "@/store/useCodeEditorStore";
-import { 
-  AlertTriangle, 
-  CheckCircle, 
-  Clock, 
-  Copy, 
-  Terminal, 
-  Trash2, 
+import {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Copy,
+  Terminal,
+  Trash2,
   Download,
   Maximize2,
   Minimize2,
@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import RunningCodeSkeleton from "./RunningCodeSkeleton";
+import RunButton from "./RunButton";
 
 // Define types for better TypeScript support
 interface OutputHistoryEntry {
@@ -218,7 +219,7 @@ function OutputPanel() {
               >
                 <Download className="w-4 h-4" />
               </button>
-              
+
               <button
                 onClick={handleCopy}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-400 hover:text-white bg-[#1e1e2e] 
@@ -309,15 +310,18 @@ function OutputPanel() {
           disabled={isRunning}
         />
         <div className="flex items-center gap-2 mt-2">
-          <button
-            onClick={handleRunWithInput}
-            disabled={isRunning}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm 
-            disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <Play className="w-4 h-4" />
-            {isRunning ? "Running..." : "Run with Input"}
-          </button>
+          <RunButton>
+            <button
+              onClick={handleRunWithInput}
+              disabled={isRunning}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm 
+      disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <Play className="w-4 h-4" />
+              {isRunning ? "Running..." : "Run with Input"}
+            </button>
+          </RunButton>
+
         </div>
       </div>
 
@@ -325,10 +329,9 @@ function OutputPanel() {
       <div
         ref={outputRef}
         className={`relative bg-[#1e1e2e]/50 backdrop-blur-md border border-[#2a2a3b] 
-        rounded-xl p-4 overflow-auto font-mono text-gray-200 transition-all duration-300 ${
-          isExpanded ? 'h-[800px]' : 'h-[600px]'
-        }`}
-        style={{ 
+        rounded-xl p-4 overflow-auto font-mono text-gray-200 transition-all duration-300 ${isExpanded ? 'h-[800px]' : 'h-[600px]'
+          }`}
+        style={{
           fontSize: `${fontSize}px`,
           whiteSpace: wordWrap ? 'pre-wrap' : 'pre'
         }}
