@@ -100,10 +100,11 @@ import { getExecutionResult, useCodeEditorStore } from "@/store/useCodeEditorSto
 import { useUser } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import { motion } from "framer-motion";
+import { Loader2, Play } from "lucide-react";
 import { api } from "../../../convex/_generated/api";
 
 type RunButtonProps = {
-  children: React.ReactElement;
+  children?: React.ReactElement; // <-- children is now optional!
 };
 
 function RunButton({ children }: RunButtonProps) {
@@ -111,12 +112,11 @@ function RunButton({ children }: RunButtonProps) {
   const { runCode, language, isRunning } = useCodeEditorStore();
   const saveExecution = useMutation(api.codeExecutions.saveExecution);
 
-  const handleRun = async (e: React.MouseEvent) => {
-    // Call child's onClick first if present
-    if (children.props.onClick) {
+  const handleRun = async (e?: React.MouseEvent) => {
+    // If children and has onClick, call it first
+    if (children?.props?.onClick) {
       await children.props.onClick(e);
     }
-    // Then run our logic (if not disabled)
     if (!isRunning) {
       await runCode();
       const result = getExecutionResult();
@@ -132,8 +132,8 @@ function RunButton({ children }: RunButtonProps) {
     }
   };
 
-  // For proper disabled logic
-  const isDisabled = children.props.disabled || isRunning;
+  // Handle disabled logic
+  const isDisabled = children?.props?.disabled || isRunning;
 
   return (
     <motion.div
@@ -158,12 +158,32 @@ function RunButton({ children }: RunButtonProps) {
           ease: "easeInOut"
         }}
       />
-      {/* Clone and enhance the child button */}
       <span className="relative z-10">
-        {React.cloneElement(children, {
-          onClick: handleRun,
-          disabled: isDisabled,
-        })}
+        {children ? (
+          React.cloneElement(children, {
+            onClick: handleRun,
+            disabled: isDisabled,
+          })
+        ) : (
+          <motion.button
+            onClick={handleRun}
+            disabled={isDisabled}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm 
+              disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {isRunning ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin text-white/70" />
+                Running...
+              </>
+            ) : (
+              <>
+                <Play className="w-4 h-4" />
+                Run with Input
+              </>
+            )}
+          </motion.button>
+        )}
       </span>
     </motion.div>
   );
