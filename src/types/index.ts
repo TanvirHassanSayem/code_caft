@@ -47,12 +47,15 @@ export interface CodeEditorState {
   editor: Monaco | null;
   executionResult: ExecutionResult | null;
 
+  userInput: string; // ✅ added
+  setUserInput: (input: string) => void; // ✅ added
+
   setEditor: (editor: Monaco) => void;
   getCode: () => string;
   setLanguage: (language: string) => void;
   setTheme: (theme: string) => void;
   setFontSize: (fontSize: number) => void;
-  runCode: () => Promise<void>;
+  runCode: (stdin?: string) => Promise<void>;
 }
 
 export interface Snippet {

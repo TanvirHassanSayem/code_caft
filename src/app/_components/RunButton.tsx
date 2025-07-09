@@ -1,14 +1,14 @@
 "use client";
 
 import { getExecutionResult, useCodeEditorStore } from "@/store/useCodeEditorStore";
-import { useUser } from "@clerk/nextjs";
+import { useUser  } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import { motion } from "framer-motion";
 import { Loader2, Play } from "lucide-react";
 import { api } from "../../../convex/_generated/api";
 
 function RunButton() {
-  const { user } = useUser();
+  const { user } = useUser ();
   const { runCode, language, isRunning } = useCodeEditorStore();
   const saveExecution = useMutation(api.codeExecutions.saveExecution);
 
@@ -27,22 +27,24 @@ function RunButton() {
   };
 
   return (
-    
     <motion.button
       onClick={handleRun}
       disabled={isRunning}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
       className={`
         group relative inline-flex items-center gap-2.5 px-5 py-2.5
         disabled:cursor-not-allowed
         focus:outline-none
+        rounded-lg overflow-hidden
+        transition-all duration-300
+        bg-blue-600 text-white shadow-lg hover:shadow-xl
       `}
     >
-      {/* bg wit gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-500 rounded-xl opacity-100 transition-opacity group-hover:opacity-90" />
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400 opacity-100 transition-opacity group-hover:opacity-90" />
 
-      <div className="relative flex items-center gap-2.5">
+      <div className="relative flex items-center gap-2.5 z-10">
         {isRunning ? (
           <>
             <div className="relative">
@@ -64,7 +66,6 @@ function RunButton() {
       </div>
     </motion.button>
   );
- }
- export default RunButton;
+}
 
-
+export default RunButton;
