@@ -22,7 +22,8 @@ function SnippetDetailPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
-      <NavigationHeader />
+      <NavigationHeader theme="dark" setTheme={() => {}} />
+
 
       <main className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
         <div className="max-w-[1200px] mx-auto">
