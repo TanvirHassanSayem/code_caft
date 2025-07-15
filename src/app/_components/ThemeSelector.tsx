@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from "react-hot-toast";
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useCodeEditorStore } from "@/store/useCodeEditorStore";
@@ -86,8 +87,30 @@ function ThemeSelector() {
   const handleThemeSelect = (themeId: string) => {
     setTheme(themeId);
     setIsOpen(false);
+    showFancyThemeToast(THEMES.find(t => t.id === themeId)?.label);
   };
 
+  function showFancyThemeToast(themeName?: string) {
+  toast.custom((t) => (
+    <div
+      className={`
+        ${t.visible ? 'animate-enter' : 'animate-leave'}
+        flex items-center gap-3 px-5 py-3 rounded-2xl shadow-lg border border-blue-500/40 bg-gradient-to-r from-indigo-700 via-purple-700 to-blue-700
+        text-white font-semibold
+      `}
+      style={{
+        minWidth: 240,
+        maxWidth: 320,
+      }}
+    >
+      <span className="text-2xl">🎨</span>
+      <div>
+        <div className="text-base font-bold tracking-tight">Theme Changed!</div>
+        <div className="text-sm text-blue-100">{themeName ? `Now using "${themeName}"` : "Theme swapped successfully"}</div>
+      </div>
+    </div>
+  ), { duration: 2500 });
+}
   const dropdownContent = (
     <AnimatePresence>
       {isOpen && buttonRect && (

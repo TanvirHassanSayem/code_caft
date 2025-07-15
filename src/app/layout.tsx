@@ -5,6 +5,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import ConvexClientProvider from "@/components/providers/ConvexClientProvider";
 import Footer from "@/components/Footer";
 import type { Viewport } from 'next';
+import { Toaster } from "react-hot-toast";
+import WelcomeToastOnSignIn from "./_components/WelcomeToastOnSignIn";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -21,6 +23,8 @@ const geistMono = localFont({
   display: "swap",
   preload: true,
 });
+
+
 
 export const metadata: Metadata = {
   title: "Code Craft and Sync",
@@ -68,6 +72,8 @@ export default function RootLayout({
             relative
           `}
         >
+          <Toaster position="top-right" />
+          <WelcomeToastOnSignIn />
           {/* Enhanced animated background with better performance */}
           <div className="fixed inset-0 overflow-hidden pointer-events-none">
             {/* Primary gradient overlay */}

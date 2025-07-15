@@ -19,6 +19,7 @@
     "react-dom": "19.0.0-rc-66855b96-20241106",
     "react-hot-toast": "^2.5.1",
     "react-syntax-highlighter": "^15.6.1",
+    "sonner": "^2.0.6",
     "svix": "^1.45.1",
     "zustand": "^5.0.2"
   },

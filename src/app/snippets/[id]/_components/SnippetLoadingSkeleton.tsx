@@ -1,5 +1,19 @@
 import NavigationHeader from "@/components/NavigationHeader";
 import { useState, useEffect } from "react";
+
+// Colorful Spinner Component
+function RainbowSpinner() {
+  return (
+    <div className="flex justify-center items-center w-full pt-16 pb-8">
+      <span className="relative flex h-16 w-16">
+        <span className="animate-spin absolute inline-flex h-full w-full rounded-full bg-gradient-to-tr from-pink-500 via-yellow-400 via-green-400 via-blue-500 to-pink-500 opacity-80" />
+        <span className="relative inline-flex rounded-full h-16 w-16 bg-gradient-to-br from-[#18181b] to-[#232339] border-4 border-white/20" />
+        <span className="absolute top-1 left-1 right-1 bottom-1 rounded-full bg-[#18181b] z-10" />
+      </span>
+    </div>
+  );
+}
+
 export default function SnippetLoadingSkeleton() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   return (
@@ -12,6 +26,9 @@ export default function SnippetLoadingSkeleton() {
         <div className="fixed top-[30%] -right-[10%] w-[30vw] h-[30vw] bg-purple-500/10 blur-[100px] rounded-full pointer-events-none z-0 animate-float-delay" />
 
         <div className="max-w-[1200px] mx-auto space-y-8 relative">
+          {/* Spinner */}
+          <RainbowSpinner />
+
           {/* Header Card - Glass Morphism */}
           <div className="bg-[#121218]/60 border border-white/5 rounded-2xl p-6 sm:p-8 shadow-lg backdrop-blur-xl transition-all hover:border-white/10">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
