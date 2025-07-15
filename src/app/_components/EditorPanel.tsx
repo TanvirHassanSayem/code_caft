@@ -24,7 +24,7 @@ import { useClerk } from "@clerk/nextjs";
 import { EditorPanelSkeleton } from "./EditorPanelSkeleton";
 import useMounted from "@/hooks/useMounted";
 import ShareSnippetDialog from "./ShareSnippetDialog";
-
+import RunButton from "./RunButton";
 // Lazy load Monaco Editor without SSR
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
@@ -360,6 +360,7 @@ function EditorPanel() {
                 </div>
 
                 {/* Run/Stop Button */}
+                <RunButton>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -383,6 +384,7 @@ function EditorPanel() {
                     </>
                   )}
                 </motion.button>
+                </RunButton>
 
                 {/* Copy Button */}
                 <motion.button

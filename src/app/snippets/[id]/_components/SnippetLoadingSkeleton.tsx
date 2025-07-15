@@ -1,7 +1,7 @@
 import NavigationHeader from "@/components/NavigationHeader";
 import { useState, useEffect } from "react";
-const [theme, setTheme] = useState<"dark" | "light">("dark");
 export default function SnippetLoadingSkeleton() {
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0f] via-[#11111b] to-[#0a0a0f] text-white">
       <NavigationHeader theme={theme} setTheme={setTheme} />
