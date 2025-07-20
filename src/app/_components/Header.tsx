@@ -160,7 +160,6 @@
 
 // export default Header;
 
-
 import { currentUser } from "@clerk/nextjs/server";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../convex/_generated/api";
@@ -307,7 +306,7 @@ async function Header() {
               convexUser={convexUser}
               ThemeSelector={ThemeSelector}
               LanguageSelector={LanguageSelector}
-              // Do NOT pass RunButton here! Import/use it inside MobileDropdown instead.
+             
             />
           </div>
         </div>

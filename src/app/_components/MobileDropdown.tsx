@@ -30,7 +30,7 @@ interface MobileDropdownProps {
   convexUser: any;
   ThemeSelector: React.ComponentType;
   LanguageSelector: React.ComponentType<{ hasAccess: boolean }>;
-  RunButton: React.ComponentType;
+  
 }
 
 export default function MobileDropdown({
@@ -38,7 +38,7 @@ export default function MobileDropdown({
   convexUser,
   ThemeSelector,
   LanguageSelector,
-  RunButton
+  
 }: MobileDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [buttonRect, setButtonRect] = useState<DOMRect | null>(null);
