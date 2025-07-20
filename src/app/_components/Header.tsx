@@ -145,7 +145,8 @@ async function Header() {
               convexUser={convexUser}
               ThemeSelector={ThemeSelector}
               LanguageSelector={LanguageSelector}
-              RunButton={RunButton}
+              RunButton={(props) => <RunButton {...props} userInput="" />}
+
             />
           </div>
         </div>
