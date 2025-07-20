@@ -6,6 +6,7 @@ import Link from "next/link";
 // --- Aurora Animated Background (Modern/Beast Mode) ---
 const AuroraBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationIdRef = useRef<number | null>(null);
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -20,36 +21,41 @@ const AuroraBackground = () => {
   }, []);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    function resize() {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      canvas.width = window.innerWidth * window.devicePixelRatio;
+      canvas.height = window.innerHeight * window.devicePixelRatio;
+      ctx.setTransform(
+        window.devicePixelRatio,
+        0,
+        0,
+        window.devicePixelRatio,
+        0,
+        0
+      );
+    }
 
- function resize() {
-  const canvas = canvasRef.current;
-  if (!canvas) return;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
-  canvas.width = window.innerWidth * window.devicePixelRatio;
-  canvas.height = window.innerHeight * window.devicePixelRatio;
-  ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
-}
-
-  
     resize();
     window.addEventListener("resize", resize);
 
-    let animationId: number;
-    const lines = 4; // how many aurora ribbons
-    const points = 28; // how smooth
+    const lines = 4;
+    const points = 28;
     const colors = [
-      ["#00eaff", "#ff5de6"], // cyan -> pink
-      ["#ffaa2b", "#7f70f5"], // orange -> blue
-      ["#20ffb8", "#ffa49a"], // green -> peach
-      ["#f093fb", "#f5576c"]  // purple -> pink
+      ["#00eaff", "#ff5de6"],
+      ["#ffaa2b", "#7f70f5"],
+      ["#20ffb8", "#ffa49a"],
+      ["#f093fb", "#f5576c"],
     ];
 
     function draw() {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const w = canvas.width / window.devicePixelRatio;
       const h = canvas.height / window.devicePixelRatio;
@@ -57,14 +63,18 @@ const AuroraBackground = () => {
 
       for (let j = 0; j < lines; j++) {
         ctx.save();
-        // Aurora position and parallax drift
-        const baseY = h * (0.28 + 0.18 * j) + mouse.y * 140 * (0.6 - j * 0.11);
+        const baseY =
+          h * (0.28 + 0.18 * j) + mouse.y * 140 * (0.6 - j * 0.11);
         ctx.globalAlpha = 0.48 - j * 0.07;
         ctx.shadowColor = colors[j][1];
         ctx.shadowBlur = 32 + 10 * j;
 
-        // Aurora gradient
-        const grad = ctx.createLinearGradient(0, baseY - 60, w, baseY + 60);
+        const grad = ctx.createLinearGradient(
+          0,
+          baseY - 60,
+          w,
+          baseY + 60
+        );
         grad.addColorStop(0, colors[j][0]);
         grad.addColorStop(1, colors[j][1]);
         ctx.strokeStyle = grad;
@@ -72,7 +82,6 @@ const AuroraBackground = () => {
         ctx.beginPath();
         for (let i = 0; i <= points; i++) {
           const x = (w / points) * i;
-          // Sine + Perlin style, but all CPU, so stay smooth
           const y =
             baseY +
             Math.sin(t * 1.3 + i * 0.4 + j * 0.7) * (35 + 7 * j) +
@@ -89,13 +98,16 @@ const AuroraBackground = () => {
         ctx.restore();
       }
 
-      animationId = requestAnimationFrame(draw);
+      animationIdRef.current = requestAnimationFrame(draw);
     }
+
     draw();
 
     return () => {
       window.removeEventListener("resize", resize);
-      cancelAnimationFrame(animationId);
+      if (animationIdRef.current !== null) {
+        cancelAnimationFrame(animationIdRef.current);
+      }
     };
   }, [mouse.x, mouse.y]);
 
@@ -111,14 +123,14 @@ const AuroraBackground = () => {
         left: 0,
         zIndex: 0,
         pointerEvents: "none",
-        filter: "blur(0.5px)"
+        filter: "blur(0.5px)",
       }}
       aria-hidden
     />
   );
 };
 
-// --- Your Existing Status Indicator (Unchanged) ---
+// --- Status Indicator (Unchanged) ---
 interface StatusIndicatorProps {
   color?: string;
   label?: string;
@@ -138,6 +150,151 @@ const StatusIndicator = memo(
   )
 );
 
+// --- Particle Glow Animated Background ---
+const ParticleGlowBackground = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationIdRef = useRef<number | null>(null);
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handle = (e: MouseEvent) => {
+      setMouse({
+        x: e.clientX / window.innerWidth - 0.5,
+        y: e.clientY / window.innerHeight - 0.5,
+      });
+    };
+    window.addEventListener("mousemove", handle);
+    return () => window.removeEventListener("mousemove", handle);
+  }, []);
+
+  useEffect(() => {
+    function resize() {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      canvas.width = window.innerWidth * window.devicePixelRatio;
+      canvas.height = window.innerHeight * window.devicePixelRatio;
+      ctx.setTransform(
+        window.devicePixelRatio,
+        0,
+        0,
+        window.devicePixelRatio,
+        0,
+        0
+      );
+    }
+
+    resize();
+    window.addEventListener("resize", resize);
+
+    // --- Particle Data
+    const count = 64;
+    const particles = Array.from({ length: count }).map((_, i) => ({
+      x: Math.random(),
+      y: Math.random(),
+      vx: 0.0015 + Math.random() * 0.0015,
+      vy: 0.0015 + Math.random() * 0.0015,
+      size: 1 + Math.random() * 2.8,
+      phase: Math.random() * Math.PI * 2,
+    }));
+
+    function draw() {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const w = canvas.width / window.devicePixelRatio;
+      const h = canvas.height / window.devicePixelRatio;
+      const t = performance.now() * 0.00015;
+
+      // --- Animate & Draw Particles
+      for (let i = 0; i < particles.length; i++) {
+        let p = particles[i];
+        p.x += Math.sin(t + p.phase) * p.vx + 0.0007 * mouse.x;
+        p.y += Math.cos(t + p.phase) * p.vy + 0.0007 * mouse.y;
+
+        if (p.x > 1) p.x -= 1;
+        if (p.y > 1) p.y -= 1;
+        if (p.x < 0) p.x += 1;
+        if (p.y < 0) p.y += 1;
+
+        const color = `hsl(${
+          210 + 50 * Math.sin(t + p.phase)
+        },80%,${62 + 18 * Math.cos(t + p.phase * 2)}%)`;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(
+          p.x * w,
+          p.y * h,
+          p.size * (1.4 + Math.sin(t * 2 + p.phase) * 0.2),
+          0,
+          Math.PI * 2
+        );
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 24 + 10 * p.size;
+        ctx.globalAlpha = 0.19 + 0.18 * Math.sin(t + p.phase * 3);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // --- Subtle connections between close particles
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const a = particles[i];
+          const b = particles[j];
+          const dx = (a.x - b.x) * w;
+          const dy = (a.y - b.y) * h;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.save();
+            ctx.strokeStyle = "rgba(120,220,255,0.11)";
+            ctx.lineWidth = 1.25 * (1 - dist / 120);
+            ctx.beginPath();
+            ctx.moveTo(a.x * w, a.y * h);
+            ctx.lineTo(b.x * w, b.y * h);
+            ctx.stroke();
+            ctx.restore();
+          }
+        }
+      }
+
+      animationIdRef.current = requestAnimationFrame(draw);
+    }
+
+    draw();
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      if (animationIdRef.current !== null) {
+        cancelAnimationFrame(animationIdRef.current);
+      }
+    };
+  }, [mouse.x, mouse.y]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full pointer-events-none"
+      style={{
+        position: "absolute",
+        width: "100vw",
+        height: "100vh",
+        top: 0,
+        left: 0,
+        zIndex: 0,
+        pointerEvents: "none",
+        filter: "blur(0.5px)",
+      }}
+      aria-hidden
+    />
+  );
+};
+
 // --- The Main Hero Section ---
 const ClientHeroSection = memo(() => {
   const [isOnline, setIsOnline] = useState(true);
@@ -147,12 +304,12 @@ const ClientHeroSection = memo(() => {
     const goOnline = () => setIsOnline(true);
     const goOffline = () => setIsOnline(false);
 
-    window.addEventListener('online', goOnline);
-    window.addEventListener('offline', goOffline);
+    window.addEventListener("online", goOnline);
+    window.addEventListener("offline", goOffline);
 
     return () => {
-      window.removeEventListener('online', goOnline);
-      window.removeEventListener('offline', goOffline);
+      window.removeEventListener("online", goOnline);
+      window.removeEventListener("offline", goOffline);
     };
   }, []);
 
@@ -184,136 +341,12 @@ const ClientHeroSection = memo(() => {
     );
   };
 
-  const ParticleGlowBackground = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [mouse, setMouse] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const handle = (e: MouseEvent) => {
-      setMouse({
-        x: e.clientX / window.innerWidth - 0.5,
-        y: e.clientY / window.innerHeight - 0.5,
-      });
-    };
-    window.addEventListener("mousemove", handle);
-    return () => window.removeEventListener("mousemove", handle);
-  }, []);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    function resize() {
-      canvas.width = window.innerWidth * window.devicePixelRatio;
-      canvas.height = window.innerHeight * window.devicePixelRatio;
-      ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
-    }
-    resize();
-    window.addEventListener("resize", resize);
-
-    // --- Particle Data
-    const count = 64;
-    const particles = Array.from({ length: count }).map((_, i) => ({
-      x: Math.random(),
-      y: Math.random(),
-      vx: 0.0015 + Math.random() * 0.0015,
-      vy: 0.0015 + Math.random() * 0.0015,
-      size: 1 + Math.random() * 2.8,
-      phase: Math.random() * Math.PI * 2,
-    }));
-
-    let animationId: number;
-
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const w = canvas.width / window.devicePixelRatio;
-      const h = canvas.height / window.devicePixelRatio;
-      const t = performance.now() * 0.00015;
-
-      // --- Animate & Draw Particles
-      for (let i = 0; i < particles.length; i++) {
-        let p = particles[i];
-        // Move particle
-        p.x += (Math.sin(t + p.phase) * p.vx + 0.0007 * mouse.x);
-        p.y += (Math.cos(t + p.phase) * p.vy + 0.0007 * mouse.y);
-
-        // Loop around edges
-        if (p.x > 1) p.x -= 1;
-        if (p.y > 1) p.y -= 1;
-        if (p.x < 0) p.x += 1;
-        if (p.y < 0) p.y += 1;
-
-        // Particle color (cool blue/purple/cyan shift)
-        const color = `hsl(${210 + 50 * Math.sin(t + p.phase)},80%,${62 + 18 * Math.cos(t + p.phase * 2)}%)`;
-
-        // Draw Glow
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(p.x * w, p.y * h, p.size * (1.4 + Math.sin(t * 2 + p.phase) * 0.2), 0, Math.PI * 2);
-        ctx.shadowColor = color;
-        ctx.shadowBlur = 24 + 10 * p.size;
-        ctx.globalAlpha = 0.19 + 0.18 * Math.sin(t + p.phase * 3);
-        ctx.fillStyle = color;
-        ctx.fill();
-        ctx.restore();
-      }
-
-      // --- Subtle connections between close particles
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const a = particles[i];
-          const b = particles[j];
-          const dx = (a.x - b.x) * w;
-          const dy = (a.y - b.y) * h;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
-            ctx.save();
-            ctx.strokeStyle = "rgba(120,220,255,0.11)";
-            ctx.lineWidth = 1.25 * (1 - dist / 120);
-            ctx.beginPath();
-            ctx.moveTo(a.x * w, a.y * h);
-            ctx.lineTo(b.x * w, b.y * h);
-            ctx.stroke();
-            ctx.restore();
-          }
-        }
-      }
-
-      animationId = requestAnimationFrame(draw);
-    }
-    draw();
-
-    return () => {
-      window.removeEventListener("resize", resize);
-      cancelAnimationFrame(animationId);
-    };
-  }, [mouse.x, mouse.y]);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none"
-      style={{
-        position: "absolute",
-        width: "100vw",
-        height: "100vh",
-        top: 0,
-        left: 0,
-        zIndex: 0,
-        pointerEvents: "none",
-        filter: "blur(0.5px)"
-      }}
-      aria-hidden
-    />
-  );
-};
-
   return (
     <div className="relative py-8 sm:py-12 mb-8 overflow-hidden bg-black">
       {/* --- Aurora Animated Background --- */}
-     <ParticleGlowBackground />
+      <ParticleGlowBackground />
+      {/* <AuroraBackground /> if you want both, add here! */}
+
       {/* Warm Coral/Peach Glow Background */}
       <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-rose-50 via-pink-100/60 to-orange-50 pointer-events-none"></div>
       {/* Soft Coral Radial Glow */}
@@ -334,7 +367,10 @@ const ClientHeroSection = memo(() => {
         </div>
 
         {/* Main Heading - Animated */}
-        <div className="flex flex-col items-center justify-center mb-2" style={{ minHeight: "3em" }}>
+        <div
+          className="flex flex-col items-center justify-center mb-2"
+          style={{ minHeight: "3em" }}
+        >
           <span
             key={words[current]}
             className="block bg-gradient-to-r from-pink-400 via-rose-300 to-orange-300 bg-clip-text text-transparent animate-pulse font-bold text-5xl sm:text-6xl lg:text-7xl xl:text-8xl leading-none transition-opacity duration-400"
@@ -443,7 +479,6 @@ const ClientHeroSection = memo(() => {
 
         {/* Status Bar */}
         <div className="relative group inline-flex items-center gap-8 px-8 py-4 bg-gradient-to-r from-[#1e215d]/80 via-[#51296e]/60 to-[#0e3749]/90 border border-white/10 backdrop-blur-2xl rounded-full shadow-2xl shadow-indigo-900/30 ring-1 ring-indigo-400/20 transition-transform duration-300 hover:scale-105 hover:shadow-3xl overflow-hidden">
-
           {/* Animated shimmer */}
           <span className="pointer-events-none absolute inset-0 z-0 before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:blur-lg before:opacity-60 before:animate-[shimmer_2.5s_linear_infinite]" />
 
@@ -452,23 +487,22 @@ const ClientHeroSection = memo(() => {
             <span className="relative flex h-3 w-3">
               {isOnline ? (
                 <>
-                  {/* This is the "siren" pulsing green effect */}
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-80"></span>
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-400"></span>
                 </>
               ) : (
-                // This is the static gray dot for offline
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-gray-400 opacity-60"></span>
               )}
             </span>
-           <button
-  className="relative px-6 py-2 rounded-xl font-medium text-white bg-zinc-900 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-r before:from-pink-500 before:via-yellow-400 before:to-pink-500 before:blur-md before:opacity-70 before:z-[-1] hover:scale-105 hover:before:opacity-100 transition-all duration-200"
-  style={{
-    boxShadow: "0 0 12px 2px rgba(255,0,128,0.4), 0 0 20px 4px rgba(255,255,0,0.3)"
-  }}
->
-  Live
-</button>
+            <button
+              className="relative px-6 py-2 rounded-xl font-medium text-white bg-zinc-900 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-r before:from-pink-500 before:via-yellow-400 before:to-pink-500 before:blur-md before:opacity-70 before:z-[-1] hover:scale-105 hover:before:opacity-100 transition-all duration-200"
+              style={{
+                boxShadow:
+                  "0 0 12px 2px rgba(255,0,128,0.4), 0 0 20px 4px rgba(255,255,0,0.3)",
+              }}
+            >
+              Live
+            </button>
           </div>
 
           {/* Divider */}
@@ -480,7 +514,9 @@ const ClientHeroSection = memo(() => {
               <span className="animate-pulse absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-80"></span>
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-300 shadow shadow-cyan-400/60"></span>
             </span>
-            <span className="text-base font-semibold text-white/80 tracking-wide select-none drop-shadow">99.9% Uptime</span>
+            <span className="text-base font-semibold text-white/80 tracking-wide select-none drop-shadow">
+              99.9% Uptime
+            </span>
           </div>
 
           {/* Divider */}
@@ -492,7 +528,9 @@ const ClientHeroSection = memo(() => {
               <span className="animate-pulse absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-80"></span>
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-pink-300 shadow shadow-pink-400/60"></span>
             </span>
-            <span className="text-base font-semibold text-white/80 tracking-wide select-none drop-shadow">24/7 Support</span>
+            <span className="text-base font-semibold text-white/80 tracking-wide select-none drop-shadow">
+              24/7 Support
+            </span>
           </div>
         </div>
       </div>
@@ -511,8 +549,13 @@ const ClientHeroSection = memo(() => {
           animation: slow-spin 60s linear infinite;
         }
         @keyframes blink-ambulance {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.1; }
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.1;
+          }
         }
         .blink-ambulance {
           animation: blink-ambulance 0.5s infinite;
