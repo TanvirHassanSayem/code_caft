@@ -25,6 +25,7 @@ import { EditorPanelSkeleton } from "./EditorPanelSkeleton";
 import useMounted from "@/hooks/useMounted";
 import ShareSnippetDialog from "./ShareSnippetDialog";
 import RunButton from "./RunButton";
+
 // Lazy load Monaco Editor without SSR
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
@@ -47,6 +48,7 @@ function debounce<T extends (...args: any[]) => void>(func: T, wait: number): T 
 }
 
 function EditorPanel() {
+  const [userInput, setUserInput] = useState("");
   const clerk = useClerk();
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
@@ -358,32 +360,42 @@ function EditorPanel() {
                     +
                   </button>
                 </div>
+                <div className="mb-3">
+                  <label className="block mb-1 text-sm font-medium text-gray-400">Input (stdin):</label>
+                  <textarea
+                    value={userInput}
+                    onChange={e => setUserInput(e.target.value)}
+                    placeholder="Enter stdin values here..."
+                    className="w-full rounded-md bg-gray-900 border border-gray-700 p-2 text-sm text-white placeholder:text-gray-500"
+                    rows={3}
+                  />
+                </div>
 
                 {/* Run/Stop Button */}
-                <RunButton>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={codeOutput.isRunning ? stopCode : runCode}
-                  disabled={codeOutput.isRunning}
-                  className={`group relative inline-flex items-center gap-2 px-4 py-2 rounded-xl overflow-hidden transition-all duration-300 ease-out whitespace-nowrap ${codeOutput.isRunning
+                <RunButton userInput={userInput}>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={codeOutput.isRunning ? stopCode : runCode}
+                    disabled={codeOutput.isRunning}
+                    className={`group relative inline-flex items-center gap-2 px-4 py-2 rounded-xl overflow-hidden transition-all duration-300 ease-out whitespace-nowrap ${codeOutput.isRunning
                       ? "bg-gradient-to-r from-red-500/20 to-red-600/20 border border-red-500/30 hover:border-red-500/50"
                       : "bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 hover:from-emerald-500/30 hover:to-emerald-600/30 border border-emerald-500/30 hover:border-emerald-500/50"
-                    }`}
-                  title={codeOutput.isRunning ? "Stop Execution" : "Run Code"}
-                >
-                  {codeOutput.isRunning ? (
-                    <>
-                      <Square className="size-4 text-red-400 group-hover:text-red-300 transition-colors" />
-                      <span className="text-sm text-red-300">Stop</span>
-                    </>
-                  ) : (
-                    <>
-                      <PlayIcon className="size-4 text-emerald-400 group-hover:text-emerald-300 transition-colors" />
-                      <span className="text-sm text-emerald-300">Run</span>
-                    </>
-                  )}
-                </motion.button>
+                      }`}
+                    title={codeOutput.isRunning ? "Stop Execution" : "Run Code"}
+                  >
+                    {codeOutput.isRunning ? (
+                      <>
+                        <Square className="size-4 text-red-400 group-hover:text-red-300 transition-colors" />
+                        <span className="text-sm text-red-300">Stop</span>
+                      </>
+                    ) : (
+                      <>
+                        <PlayIcon className="size-4 text-emerald-400 group-hover:text-emerald-300 transition-colors" />
+                        <span className="text-sm text-emerald-300">Run</span>
+                      </>
+                    )}
+                  </motion.button>
                 </RunButton>
 
                 {/* Copy Button */}
