@@ -28,7 +28,7 @@ export default function WelcomeToastOnSignIn() {
             <div className="text-sm text-green-100">You are welcome here. Enjoy!!</div>
           </div>
         </div>
-      ), { duration: 3200 });
+      ), { duration: 1200 });
       hasShown.current = true;
     }
     if (!isSignedIn) {

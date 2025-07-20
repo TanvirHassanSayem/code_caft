@@ -21,6 +21,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import RunningCodeSkeleton from "./RunningCodeSkeleton";
 import RunButton from "./RunButton";
 
+import { SignedIn } from "@clerk/nextjs";
 // Define types for better TypeScript support
 interface OutputHistoryEntry {
   id: number;
@@ -310,7 +311,8 @@ function OutputPanel() {
           disabled={isRunning}
         />
         <div className="flex items-center gap-2 mt-2">
-          <RunButton>
+          <SignedIn>
+              <RunButton>
             <button
               onClick={handleRunWithInput}
               disabled={isRunning}
@@ -321,6 +323,7 @@ function OutputPanel() {
               {isRunning ? "Running..." : "Run with Input"}
             </button>
           </RunButton>
+            </SignedIn>
 
         </div>
       </div>

@@ -8,6 +8,7 @@ import NavigationHeader from "@/components/NavigationHeader";
 import { AnimatePresence, motion } from "framer-motion";
 import { BookOpen, Code, Grid, Layers, Search, Tag, X } from "lucide-react";
 import SnippetCard from "./_components/SnippetCard";
+import React from "react";
 
 // --- Custom Toast function ---
 function showSnippetsCollectionToast() {
@@ -46,11 +47,130 @@ function showSnippetsCollectionToast() {
   ), { duration: 3600 });
 }
 
+// --- Animated Liquid Background Blobs ---
+function AnimatedLiquidBlobs() {
+  const blobColors = [
+    "url(#liquidGradient1)",
+    "url(#liquidGradient2)",
+    "url(#liquidGradient3)",
+  ];
+  const blobs = [
+    {
+      initial: { x: 100, y: 50, scale: 1 },
+      animate: {
+        x: [100, 600, 300, 100],
+        y: [50, 150, 250, 50],
+        scale: [1, 1.2, 0.8, 1],
+      },
+      d: [
+        "M60,300 Q100,200 250,250 Q300,280 200,320 Q120,340 60,300Z",
+        "M80,320 Q130,210 250,230 Q280,250 200,330 Q130,370 80,320Z",
+        "M70,280 Q120,200 220,250 Q290,280 200,310 Q120,340 70,280Z"
+      ],
+      color: blobColors[0],
+      duration: 16,
+      gradient: (
+        <linearGradient id="liquidGradient1" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#a78bfa" />
+          <stop offset="65%" stopColor="#f9a8d4" />
+          <stop offset="100%" stopColor="#38bdf8" />
+        </linearGradient>
+      ),
+    },
+    {
+      initial: { x: 600, y: 160, scale: 0.8 },
+      animate: {
+        x: [600, 150, 700, 600],
+        y: [160, 120, 320, 160],
+        scale: [0.8, 1, 1.1, 0.8],
+      },
+      d: [
+        "M240,80 Q270,120 350,130 Q390,180 310,170 Q240,190 180,150 Q110,90 240,80Z",
+        "M230,90 Q290,140 380,140 Q370,200 310,160 Q250,180 180,150 Q120,80 230,90Z",
+        "M250,100 Q280,110 370,140 Q390,180 320,190 Q240,200 180,150 Q110,100 250,100Z"
+      ],
+      color: blobColors[1],
+      duration: 19,
+      gradient: (
+        <linearGradient id="liquidGradient2" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#818cf8" />
+          <stop offset="50%" stopColor="#f472b6" />
+          <stop offset="100%" stopColor="#38bdf8" />
+        </linearGradient>
+      ),
+    },
+    {
+      initial: { x: 400, y: 400, scale: 1.1 },
+      animate: {
+        x: [400, 200, 500, 400],
+        y: [400, 300, 200, 400],
+        scale: [1.1, 0.7, 1.3, 1.1],
+      },
+      d: [
+        "M340,370 Q390,360 370,450 Q320,480 260,430 Q200,410 240,370 Q310,300 340,370Z",
+        "M350,390 Q410,400 390,470 Q340,490 270,440 Q210,410 240,370 Q320,320 350,390Z",
+        "M340,370 Q400,360 370,430 Q320,490 260,440 Q190,410 240,370 Q300,320 340,370Z"
+      ],
+      color: blobColors[2],
+      duration: 23,
+      gradient: (
+        <linearGradient id="liquidGradient3" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#f472b6" />
+          <stop offset="70%" stopColor="#38bdf8" />
+          <stop offset="100%" stopColor="#a78bfa" />
+        </linearGradient>
+      ),
+    },
+  ];
+
+  return (
+    <svg
+      width="900"
+      height="900"
+      className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none select-none"
+      style={{ opacity: 0.17, filter: "url(#gooey)" }}
+    >
+      <defs>
+        <filter id="gooey">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="28" result="blur" />
+          <feColorMatrix
+            in="blur"
+            mode="matrix"
+            values="
+              1 0 0 0 0
+              0 1 0 0 0
+              0 0 1 0 0
+              0 0 0 24 -12"
+            result="goo"
+          />
+          <feBlend in="SourceGraphic" in2="goo" />
+        </filter>
+        {blobs.map((b, idx) => React.cloneElement(b.gradient, { key: idx }))}
+      </defs>
+      {blobs.map((blob, idx) => (
+        <motion.path
+          key={idx}
+          d={blob.d[0]}
+          fill={blob.color}
+          initial={blob.initial}
+          animate={{
+            ...blob.animate,
+            d: blob.d,
+          }}
+          transition={{
+            repeat: Infinity,
+            repeatType: "mirror",
+            duration: blob.duration,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+    </svg>
+  );
+}
 
 export default function SnippetsPage() {
   const snippets = useQuery(api.snippets.getSnippets);
-
-  // Toast should show only once per mount
   const toastShown = useRef(false);
 
   useEffect(() => {
@@ -60,13 +180,11 @@ export default function SnippetsPage() {
     }
   }, [snippets]);
 
-  // Search, language filter, view, and theme state
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [view, setView] = useState<"grid" | "list">("grid");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
 
-  // On mount: check saved or system theme
   useEffect(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("theme");
@@ -76,14 +194,12 @@ export default function SnippetsPage() {
     }
   }, []);
 
-  // Update <html> class & localStorage on theme change
   useEffect(() => {
     document.documentElement.classList.remove("dark", "light");
     document.documentElement.classList.add(theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // Memoized filtering
   const { languages, popularLanguages, filteredSnippets } = useMemo(() => {
     if (!snippets) return { languages: [], popularLanguages: [], filteredSnippets: [] };
     const langs = [...new Set(snippets.map((s) => s.language))];
@@ -99,7 +215,6 @@ export default function SnippetsPage() {
     return { languages: langs, popularLanguages: popular, filteredSnippets: filtered };
   }, [snippets, searchQuery, selectedLanguage]);
 
-  // Handlers
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   }, []);
@@ -132,11 +247,7 @@ export default function SnippetsPage() {
 
   return (
     <div className="relative min-h-screen bg-white dark:bg-[#1e1e2e] text-black dark:text-white overflow-hidden">
-      {/* Animated background blob */}
-      <div
-        className="absolute top-[-100px] left-1/2 transform -translate-x-1/2 w-[800px] h-[800px] bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 opacity-20 rounded-full blur-[200px] z-0"
-        style={{ willChange: "transform" }}
-      />
+      <AnimatedLiquidBlobs />
       <NavigationHeader
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
@@ -147,7 +258,6 @@ export default function SnippetsPage() {
       />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        {/* Hero Section */}
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -175,7 +285,6 @@ export default function SnippetsPage() {
           </motion.p>
         </div>
 
-        {/* Search + Filters */}
         <div className="relative max-w-5xl mx-auto mb-8 sm:mb-12 space-y-4 sm:space-y-6">
           <div className="relative group">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500" />
@@ -256,7 +365,6 @@ export default function SnippetsPage() {
           </div>
         </div>
 
-        {/* Snippet Cards */}
         <motion.div
           layout
           className={`grid gap-4 sm:gap-6 ${

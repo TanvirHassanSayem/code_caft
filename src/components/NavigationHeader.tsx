@@ -24,9 +24,6 @@ import {
   Search,
   Bell,
   Rocket,
-  ArrowRight,
-  Zap,
-  Flame,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -88,11 +85,8 @@ function NavigationHeader({
 
   return (
     <div className="sticky top-0 z-50 w-full border-b border-gray-800/20 bg-gray-950/98 backdrop-blur-3xl backdrop-saturate-200">
-      {/* Background layers & shimmer omitted for brevity, add yours back if needed */}
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative h-16 flex items-center justify-between">
-
           {/* LEFT: Logo & Nav */}
           <div className="flex items-center gap-3 sm:gap-6">
             {/* Mobile Menu Button */}
@@ -212,7 +206,7 @@ function NavigationHeader({
             </nav>
           </div>
 
-          {/* CENTER: Desktop Search Bar (NO FORM, NO 404) */}
+          {/* CENTER: Desktop Search Bar */}
           <div className="hidden xl:flex items-center flex-1 max-w-2xl mx-8">
             <div className="relative w-full group">
               <div className="flex items-center bg-gray-800/50 border border-gray-700/50 rounded-lg hover:bg-gray-800/70 focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:border-blue-500/50 transition-all duration-300">
@@ -360,8 +354,117 @@ function NavigationHeader({
           </div>
         )}
 
-        {/* ...Mobile Menu overlay here if you want it... */}
-
+        {/* MOBILE MENU OVERLAY */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden fixed inset-0 z-50 bg-gray-950/95 backdrop-blur-md flex flex-col">
+            {/* Close Button */}
+            <button
+              onClick={closeMobileMenu}
+              className="absolute top-3 right-4 p-2 rounded-lg bg-gray-800/50 text-gray-400 hover:text-gray-200 hover:bg-gray-700 transition"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <nav className="mt-20 flex-1 px-6 space-y-4 overflow-y-auto">
+              {/* Code */}
+              <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white bg-gray-800/60 hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 border border-gray-700/40 hover:border-blue-500/50 transition">
+                <Code2 className="w-5 h-5" />
+                <span className="text-base font-semibold">Code</span>
+              </button>
+              {/* Resources dropdown (simple list) */}
+              <div>
+                <button
+                  onClick={() => setIsResourcesOpen(!isResourcesOpen)}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white bg-gray-800/60 hover:bg-gradient-to-r hover:from-emerald-600/20 hover:to-teal-600/20 border border-gray-700/40 hover:border-emerald-500/50 transition"
+                >
+                  <BookOpen className="w-5 h-5" />
+                  <span className="text-base font-semibold">Resources</span>
+                  <ChevronRight className={`w-4 h-4 ml-auto transition-transform ${isResourcesOpen ? "rotate-90" : ""}`} />
+                </button>
+                {isResourcesOpen && (
+                  <div className="mt-2 ml-6 space-y-2">
+                    {programmingLanguages.map((lang, index) => (
+                      <a
+                        key={index}
+                        href={lang.docs}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800/50 text-sm text-gray-300 hover:text-white"
+                      >
+                        <span>{lang.icon}</span>
+                        <span>{lang.name}</span>
+                        <ExternalLink className="w-3 h-3 ml-auto text-gray-500" />
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {/* Community dropdown (simple list) */}
+              <div>
+                <button
+                  onClick={() => setIsCommunityOpen(!isCommunityOpen)}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white bg-gray-800/60 hover:bg-gradient-to-r hover:from-orange-600/20 hover:to-red-600/20 border border-gray-700/40 hover:border-orange-500/50 transition"
+                >
+                  <Users className="w-5 h-5" />
+                  <span className="text-base font-semibold">Community</span>
+                  <ChevronRight className={`w-4 h-4 ml-auto transition-transform ${isCommunityOpen ? "rotate-90" : ""}`} />
+                </button>
+                {isCommunityOpen && (
+                  <div className="mt-2 ml-6 space-y-2">
+                    {communityLinks.map((community, index) => (
+                      <a
+                        key={index}
+                        href={community.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-800/50 text-sm text-gray-300 hover:text-white"
+                      >
+                        <span>{community.icon}</span>
+                        <span>{community.name}</span>
+                        <ExternalLink className="w-3 h-3 ml-auto text-gray-500" />
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {/* Optionally, add the Pro/Sign Up and theme toggle here */}
+              <div className="flex flex-col gap-3 mt-6">
+                <SignedOut>
+                  <Link
+                    href="/pricing"
+                    className="flex items-center gap-2 px-4 py-3 rounded-lg border border-amber-500/40 hover:border-amber-400/60 bg-gradient-to-r from-amber-500/20 to-orange-500/20 hover:from-amber-500/30 hover:to-orange-500/30 text-amber-400 font-bold transition-all duration-500"
+                  >
+                    <Crown className="w-5 h-5 text-amber-400 mr-1" />
+                    Pro <span className="ml-1 text-xs text-amber-400/90">Unlimited</span>
+                  </Link>
+                  <Link
+                    href="/sign-up"
+                    className="flex items-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-500 hover:via-purple-500 hover:to-cyan-500 text-white font-bold transition-all duration-500"
+                  >
+                    <Rocket className="w-5 h-5" />
+                    Start <span className="ml-1 text-xs opacity-90">Building Now</span>
+                  </Link>
+                </SignedOut>
+                {/* Theme Toggle */}
+                <button
+                  onClick={handleThemeToggle}
+                  className="flex items-center gap-2 px-4 py-3 rounded-lg bg-gray-800/60 border border-gray-700/50 text-gray-400 hover:text-gray-100 transition"
+                  aria-label="Toggle theme"
+                >
+                  {theme === "dark" ? (
+                    <Sun className="w-5 h-5 text-yellow-300" />
+                  ) : (
+                    <Moon className="w-5 h-5 text-blue-400" />
+                  )}
+                  <span className="font-semibold text-sm">{theme === "dark" ? "Light" : "Dark"} Mode</span>
+                </button>
+              </div>
+              {/* Profile Button if signed in */}
+              <div className="mt-4">
+                <HeaderProfileBtn />
+              </div>
+            </nav>
+          </div>
+        )}
       </div>
       {/* ...your custom styles... */}
     </div>
@@ -369,199 +472,3 @@ function NavigationHeader({
 }
 
 export default NavigationHeader;
-
-
-
-
-// "use client";
-// import {
-//   Blocks, Code2, BookOpen, Users, ChevronDown, Search, Filter, Play, Github, Bell, Settings, Crown, Rocket, ExternalLink, Globe, FileText, Menu, X
-// } from "lucide-react";
-// import Link from "next/link";
-// import { SignedOut } from "@clerk/nextjs";
-// import { useState } from "react";
-// import HeaderProfileBtn from "@/app/_components/HeaderProfileBtn";
-
-// const programmingLanguages = [
-//   { name: "JavaScript", docs: "https://developer.mozilla.org/en-US/docs/Web/JavaScript", icon: "🟨" },
-//   { name: "Python", docs: "https://docs.python.org/3/", icon: "🐍" },
-//   { name: "React", docs: "https://react.dev/", icon: "⚛️" },
-//   { name: "TypeScript", docs: "https://www.typescriptlang.org/docs/", icon: "🔷" },
-//   { name: "Node.js", docs: "https://nodejs.org/en/docs/", icon: "🟢" },
-//   { name: "Java", docs: "https://docs.oracle.com/en/java/", icon: "☕" },
-//   { name: "C++", docs: "https://en.cppreference.com/w/", icon: "🔧" },
-//   { name: "Go", docs: "https://golang.org/doc/", icon: "🐹" },
-//   { name: "Rust", docs: "https://doc.rust-lang.org/", icon: "🦀" },
-//   { name: "PHP", docs: "https://www.php.net/docs.php", icon: "🐘" },
-//   { name: "Swift", docs: "https://swift.org/documentation/", icon: "🍎" },
-//   { name: "Kotlin", docs: "https://kotlinlang.org/docs/", icon: "🎯" }
-// ];
-
-// const communityLinks = [
-//   { name: "Stack Overflow", url: "https://stackoverflow.com/", icon: "🟠", description: "Q&A for developers" },
-//   { name: "GitHub", url: "https://github.com/", icon: "🐙", description: "Code repositories" },
-//   { name: "Reddit r/programming", url: "https://reddit.com/r/programming", icon: "🔴", description: "Programming discussions" },
-//   { name: "Dev.to", url: "https://dev.to/", icon: "💎", description: "Developer community" },
-//   { name: "HackerNews", url: "https://news.ycombinator.com/", icon: "🟧", description: "Tech news & discussions" },
-//   { name: "Discord Communities", url: "https://discord.com/", icon: "💬", description: "Real-time chat" },
-//   { name: "Hashnode", url: "https://hashnode.com/", icon: "📝", description: "Developer blogs" },
-//   { name: "CodePen", url: "https://codepen.io/", icon: "🖊️", description: "Front-end playground" }
-// ];
-
-// export default function NavigationHeader({
-//   searchQuery,
-//   setSearchQuery,
-//   searchLanguage,
-//   setSearchLanguage,
-//   theme,
-//   setTheme
-// }: {
-//   searchQuery: string;
-//   setSearchQuery: (val: string) => void;
-//   searchLanguage: string | null;
-//   setSearchLanguage: (val: string | null) => void;
-//   theme: "dark" | "light";
-//   setTheme: (t: "dark" | "light") => void;
-// }) {
-//   const [isResourcesOpen, setIsResourcesOpen] = useState(false);
-//   const [isCommunityOpen, setIsCommunityOpen] = useState(false);
-//   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-//   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
-
-//   const handleLangChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
-//     setSearchLanguage(e.target.value === "all" ? null : e.target.value);
-
-//   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-//     setSearchQuery(e.target.value);
-
-//   const closeMobileMenu = () => {
-//     setIsMobileMenuOpen(false);
-//     setIsResourcesOpen(false);
-//     setIsCommunityOpen(false);
-//   };
-
-//   return (
-//     <div className="sticky top-0 z-50 w-full border-b border-gray-800/20 bg-white/90 dark:bg-gray-950/98 backdrop-blur-3xl backdrop-saturate-200 transition-colors">
-//       {/* ... animated backgrounds as before ... */}
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-//         <div className="relative h-16 flex items-center justify-between">
-//           <div className="flex items-center gap-3 sm:gap-6">
-//             <button
-//               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-//               className="lg:hidden p-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 hover:border-gray-600/50 text-gray-400 hover:text-gray-300 transition-all duration-300"
-//             >
-//               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-//             </button>
-//             <Link href="/" className="flex items-center gap-2 sm:gap-3 group relative">
-//               <Blocks className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
-//               <span className="block text-base sm:text-lg font-bold bg-gradient-to-r from-blue-400 via-blue-300 via-purple-400 to-cyan-400 text-transparent bg-clip-text group-hover:from-blue-300 group-hover:via-purple-300 group-hover:to-cyan-300 transition-all duration-500 animate-gradient-x">
-//                 CodeCraft
-//               </span>
-//             </Link>
-//           </div>
-//           {/* Search (Desktop) */}
-//           <div className="hidden xl:flex items-center flex-1 max-w-2xl mx-8">
-//             <form onSubmit={e => e.preventDefault()} className="relative w-full group">
-//               <div className="flex items-center bg-gray-800/50 border border-gray-700/50 rounded-lg hover:bg-gray-800/70 focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:border-blue-500/50 transition-all duration-300">
-//                 <Search className="ml-3 w-4 h-4 text-gray-400 group-hover:text-gray-300 transition-colors" />
-//                 <select
-//                   value={searchLanguage || "all"}
-//                   onChange={handleLangChange}
-//                   className="bg-transparent border-none text-xs text-gray-400 focus:outline-none focus:text-gray-300 px-2 py-2 min-w-20"
-//                 >
-//                   <option value="all">All</option>
-//                   {programmingLanguages.map(lang => (
-//                     <option key={lang.name} value={lang.name.toLowerCase()}>
-//                       {lang.name}
-//                     </option>
-//                   ))}
-//                 </select>
-//                 <div className="w-px h-4 bg-gray-600/50" />
-//                 <input
-//                   type="text"
-//                   placeholder="Search code snippets, templates, projects..."
-//                   value={searchQuery}
-//                   onChange={handleInputChange}
-//                   className="flex-1 px-3 py-2 bg-transparent text-gray-300 placeholder-gray-500 focus:outline-none"
-//                 />
-//                 <div className="flex items-center gap-2 pr-3">
-//                   <Filter className="w-3 h-3 text-gray-500" />
-//                   <div className="text-xs text-gray-500 bg-gray-700/50 px-2 py-1 rounded">
-//                     ⌘K
-//                   </div>
-//                 </div>
-//               </div>
-//             </form>
-//           </div>
-//           {/* Right actions */}
-//           <div className="flex items-center gap-2 sm:gap-3">
-//             <button
-//               onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-//               className="xl:hidden p-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 hover:border-gray-600/50 text-gray-400 hover:text-gray-300 transition-all duration-300"
-//             >
-//               <Search className="w-4 h-4" />
-//             </button>
-//             {/* THEME TOGGLE BUTTON */}
-//             <button
-//               className="hidden lg:block group relative p-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 hover:border-gray-600/50 text-gray-400 hover:text-gray-300 transition-all duration-300 shadow-lg overflow-hidden"
-//               aria-label="Toggle theme"
-//               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-//             >
-//               <Settings className="w-4 h-4 relative z-10 group-hover:rotate-90 transition-transform duration-500" />
-//             </button>
-//             <HeaderProfileBtn />
-//           </div>
-//         </div>
-//         {/* Mobile Search Bar */}
-//         {mobileSearchOpen && (
-//           <div className="xl:hidden pb-4">
-//             <form onSubmit={e => e.preventDefault()} className="relative group">
-//               <div className="flex items-center bg-gray-800/50 border border-gray-700/50 rounded-lg hover:bg-gray-800/70 focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:border-blue-500/50 transition-all duration-300">
-//                 <Search className="ml-3 w-4 h-4 text-gray-400 group-hover:text-gray-300 transition-colors" />
-//                 <select
-//                   value={searchLanguage || "all"}
-//                   onChange={handleLangChange}
-//                   className="bg-transparent border-none text-xs text-gray-400 focus:outline-none focus:text-gray-300 px-2 py-2 min-w-16"
-//                 >
-//                   <option value="all">All</option>
-//                   {programmingLanguages.map(lang => (
-//                     <option key={lang.name} value={lang.name.toLowerCase()}>
-//                       {lang.name}
-//                     </option>
-//                   ))}
-//                 </select>
-//                 <div className="w-px h-4 bg-gray-600/50" />
-//                 <input
-//                   type="text"
-//                   placeholder="Search..."
-//                   value={searchQuery}
-//                   onChange={handleInputChange}
-//                   className="flex-1 px-3 py-2 bg-transparent text-gray-300 placeholder-gray-500 focus:outline-none"
-//                 />
-//                 <Filter className="w-4 h-4 text-gray-500 mr-3" />
-//               </div>
-//             </form>
-//           </div>
-//         )}
-//       </div>
-//       {/* Custom CSS for animations */}
-//       <style jsx>{`
-//         @keyframes gradient-x {
-//           0%, 100% { background-position: 0% 50%; }
-//           50% { background-position: 100% 50%; }
-//         }
-//         @keyframes shimmer {
-//           0% { transform: translateX(-100%); }
-//           100% { transform: translateX(100%); }
-//         }
-//         .animate-gradient-x {
-//           background-size: 200% 200%;
-//           animation: gradient-x 8s ease infinite;
-//         }
-//         .animate-shimmer {
-//           animation: shimmer 3s linear infinite;
-//         }
-//       `}</style>
-//     </div>
-//   );
-// }
