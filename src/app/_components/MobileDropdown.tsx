@@ -311,7 +311,7 @@ export default function MobileDropdown({
         {/* Run Button Section */}
         {user && (
           <div className="p-3 border-t border-gray-700/30">
-            <RunButton />
+            
           </div>
         )}
       </div>
