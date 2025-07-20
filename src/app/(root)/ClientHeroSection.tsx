@@ -25,12 +25,16 @@ const AuroraBackground = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    function resize() {
-  if (!canvas) return; // <-- add this!
+ function resize() {
+  const canvas = canvasRef.current;
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
   canvas.width = window.innerWidth * window.devicePixelRatio;
   canvas.height = window.innerHeight * window.devicePixelRatio;
   ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
 }
+
   
     resize();
     window.addEventListener("resize", resize);
