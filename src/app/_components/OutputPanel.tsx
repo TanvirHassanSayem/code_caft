@@ -1,5 +1,4 @@
 "use client";
-
 import { useCodeEditorStore } from "@/store/useCodeEditorStore";
 import {
   AlertTriangle,
@@ -20,7 +19,6 @@ import {
 import { useEffect, useRef, useState, useCallback } from "react";
 import RunningCodeSkeleton from "./RunningCodeSkeleton";
 import RunButton from "./RunButton";
-
 import { SignedIn } from "@clerk/nextjs";
 // Define types for better TypeScript support
 interface OutputHistoryEntry {
@@ -311,19 +309,22 @@ function OutputPanel() {
           disabled={isRunning}
         />
         <div className="flex items-center gap-2 mt-2">
+          {/* <SignedIn>
+              <RunButton> */}
           <SignedIn>
-              <RunButton>
-            <button
-              onClick={handleRunWithInput}
-              disabled={isRunning}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm 
-      disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <Play className="w-4 h-4" />
-              {isRunning ? "Running..." : "Run with Input"}
-            </button>
-          </RunButton>
-            </SignedIn>
+            <RunButton userInput={userInput}>
+              <button
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm 
+        disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                disabled={isRunning}
+              >
+                <Play className="w-4 h-4" />
+                {isRunning ? "Running..." : "Run with Input"}
+              </button>
+            </RunButton>
+          </SignedIn>
+          {/* </RunButton>
+            </SignedIn> */}
 
         </div>
       </div>
